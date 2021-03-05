@@ -1,0 +1,31 @@
+{
+  "name": "vireta-api",
+  "version": "1.0.0",
+  "description": "Vireta - grow up!",
+  "main": "./compiled/main.js",
+  "dependencies": {
+    "tslint": "^6.1.3",
+    "typescript": "^4.2.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "watch-ts" : "npx tsc -w",
+    "watch-js" : "nodemon -w ./compiled/main.js",
+    "dev" : "concurrently \"npm:watch-ts\" \"npm:watch-js\" "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VladPryad/vireta-api.git"
+  },
+  "keywords": [
+    "typescript",
+    "agro",
+    "api"
+  ],
+  "author": "VladPryad",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VladPryad/vireta-api/issues"
+  },
+  "homepage": "https://github.com/VladPryad/vireta-api#readme"
+}
