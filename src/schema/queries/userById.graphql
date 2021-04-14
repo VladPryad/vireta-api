@@ -1,0 +1,9 @@
+type User {
+    name: String
+    googleId: String
+    password: String
+}
+
+extend type Query {
+  userById(id: String): User
+}
