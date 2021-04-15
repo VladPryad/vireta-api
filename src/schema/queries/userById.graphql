@@ -1,7 +1,8 @@
 type User {
-    name: String
-    googleId: String
-    password: String
+  id: String
+  login: String
+  googleId: String
+  password: String
 }
 
 extend type Query {

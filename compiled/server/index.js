@@ -24,7 +24,7 @@ var errorHandler = function (err) {
     console.log("Error while running resolver", {
         error: err
     });
-    return new Error("Internal server error");
+    return err.message;
 };
 function createServer() {
     var app = new koa_1.default();

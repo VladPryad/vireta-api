@@ -8,7 +8,7 @@ const errorHandler = (err: any) => {
   console.log("Error while running resolver", {
     error: err
   });
-  return new Error("Internal server error");
+  return err.message;
 };
 
 export function createServer(): Koa {
