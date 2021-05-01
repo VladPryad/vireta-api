@@ -1,0 +1,21 @@
+type Record {
+    timestamp: String
+    value: String
+}
+
+type Measurement {
+    ph: [Record]
+    humidity: [Record]
+    mineralization: [Record]
+}
+
+type PotRecords {
+    potId: String!
+    potName: String
+    measurements: Measurement
+    total: Int
+}
+
+extend type Subscription {
+    getPotRecordsIRT(id: String!): PotRecords
+}

@@ -1,8 +1,18 @@
 import Koa from "koa";
 import KoaRouter from "koa-router";
 import { ApolloServer, gql } from "apollo-server-koa";
-import { readdirSync, readFileSync } from 'fs';
-import { join as pathJoin } from 'path';
+import pubsub from './pubsub'
+import cors from '@koa/cors';
+import dotenv from 'dotenv'
+import { 
+  mutationResolvers,
+  mutationSchema,
+  queryResolvers,
+  querySchema,
+  subscriptionResolvers,
+  subscriptionSchema } from "./gql-files";
+
+dotenv.config();
 
 const errorHandler = (err: any) => {
   console.log("Error while running resolver", {
@@ -11,71 +21,40 @@ const errorHandler = (err: any) => {
   return err.message;
 };
 
-export function createServer(): Koa {
+export async function createServer() {
   const app = new Koa();
 
+  const corsOptions = {
+    origin: "*",
+    credentials: true
+  };
+
+  app.use(cors(corsOptions));
+
   const router = new KoaRouter();
-
-  const querySchemaFiles = readdirSync(pathJoin(process.cwd(), "src/schema/queries"))
-  .filter(file => file.indexOf(".graphql") > 0);
-
-  const querySchema = querySchemaFiles
-  .map(file => readFileSync(pathJoin(process.cwd(), `src/schema/queries/${file}`)).toString())
-  .join();
-
-const queryResolvers = querySchemaFiles
-  .map(file => file.replace(".graphql", ".js"))
-  .map(file => {
-    let query = require(pathJoin(process.cwd(), `compiled/resolvers/queries/${file}`)).default;
-    return query;
-  })
-  .reduce(
-    (initial, current) => ({
-      ...initial,
-      ...current.Query
-    }),
-    {}
-  );
-
-  const mutationSchemaFiles = readdirSync(pathJoin(process.cwd(), "src/schema/mutations"))
-  .filter(file => file.indexOf(".graphql") > 0);
-
-  const mutationSchema = mutationSchemaFiles
-  .map(file => readFileSync(pathJoin(process.cwd(), `src/schema/mutations/${file}`)).toString())
-  .join();
-
-const mutationResolvers = mutationSchemaFiles
-  .map(file => file.replace(".graphql", ".js"))
-  .map(file => {
-    let mutation = require(pathJoin(process.cwd(), `compiled/resolvers/mutations/${file}`)).default;
-    return mutation;
-  })
-  .reduce(
-    (initial, current) => ({
-      ...initial,
-      ...current.Mutation
-    }),
-    {}
-  );
 
   const server = new ApolloServer({
     typeDefs: gql(`
     type Query
     type Mutation
+    type Subscription
 
     schema {
       query: Query
       mutation: Mutation
+      subscription: Subscription
     }
 
     ${querySchema}
     ${mutationSchema}
+    ${subscriptionSchema}
   `),
-    context: ({ ctx }) => ctx,
+    context: ({ ctx }) => ({ ctx,  pubsub}),
     formatError: errorHandler,
     resolvers: {
       Query: queryResolvers,
-      Mutation: mutationResolvers
+      Mutation: mutationResolvers,
+      Subscription: subscriptionResolvers
     }
   });
 
@@ -85,5 +64,8 @@ const mutationResolvers = mutationSchemaFiles
   app.use(router.routes());
   app.use(router.allowedMethods());
 
-  return app;
+  const httpServer = app.listen(process.env.PORT_REST_EXPOSE);
+  server.installSubscriptionHandlers(httpServer);
+  
+  console.log(`API Gateway listening on ${process.env.PORT_REST_EXPOSE}/graphql`);
 }
