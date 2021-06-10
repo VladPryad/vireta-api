@@ -8,7 +8,7 @@ export default {
     Subscription: {
       getPotRecordsIRT: {
           subscribe: (_: any, args: {id: String}, { pubsub }: { pubsub: PubSub}) => {
-            getPotRecordsIRT();
+            getPotRecordsIRT(args.id);
             return pubsub.asyncIterator(NEW_INCOMING_MEASUREMENT)
           }
       }

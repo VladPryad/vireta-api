@@ -10,7 +10,7 @@ exports.default = {
         getPotRecordsIRT: {
             subscribe: function (_, args, _a) {
                 var pubsub = _a.pubsub;
-                getPotRecordsIRT_1.default();
+                getPotRecordsIRT_1.default(args.id);
                 return pubsub.asyncIterator(events_1.NEW_INCOMING_MEASUREMENT);
             }
         }

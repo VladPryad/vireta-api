@@ -3,10 +3,16 @@ type Record {
     value: String
 }
 
+type Parameter {
+    min: String
+    max: String
+    values: [Record]
+}
+
 type Measurement {
-    ph: [Record]
-    humidity: [Record]
-    mineralization: [Record]
+    ph: Parameter
+    humidity: Parameter
+    temperature: Parameter
 }
 
 type PotRecords {

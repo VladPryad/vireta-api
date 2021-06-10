@@ -1,0 +1,10 @@
+type AuthInfo {
+    isLoggedIn: Boolean!,
+    token: String,
+    login: String,
+    id: String
+}
+
+extend type Query {
+    logIn(username: String!, password: String!): AuthInfo
+}

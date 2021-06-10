@@ -4,12 +4,12 @@ import { NEW_INCOMING_MEASUREMENT } from '../constants/events';
 import { PotService } from '../../../services.registry';
 import { MSG } from '../constants/serverEvents';
 
-export default (): void => {
+export default (id: String): void => {
 
     const ws = new WebSocket(PotService.uriWS!);
 
     ws.onopen = (event: OpenEvent) => {
-        ws.send("Pot Id From Client");
+        ws.send(id);
     }
 
     ws.onmessage = (event: MessageEvent) => {

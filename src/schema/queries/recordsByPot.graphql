@@ -1,0 +1,4 @@
+
+extend type Query {
+    recordsByPot(id: String): PotRecords
+}
